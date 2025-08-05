@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   root to: "events#index "
 
   resources :events, only: [:index, :show, :new, :create, :destroy] do
-    resources :bookings, only: [:index, :create]
+    resources :bookings, only: [:create]
   end
 
   resources :bookings, only: [:index, :destroy]
