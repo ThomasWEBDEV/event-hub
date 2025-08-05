@@ -1,2 +1,69 @@
-<h1>Events#show</h1>
-<p>Find me in app/views/events/show.html.erb</p>
+<div class="card">
+  <div class="card-body">
+    <h1><%= @event.title %></h1>
+
+    <p class="mt-3"><%= @event.description %></p>
+
+    <div class="mt-4">
+      <p><strong>📅 Date :</strong> <%= @event.event_date.strftime("%d/%m/%Y à %H:%M") %></p>
+      <p><strong>📍 Lieu :</strong> <%= @event.location %></p>
+      <p><strong>👤 Organisateur :</strong> <%= @event.user.email %></p>
+      <p><strong>👥 Places :</strong> <%= @event.bookings.count %> / <%= @event.max_participants %> inscrits</p>
+    </div>
+
+    <div class="mt-3">
+      <% places_restantes = @event.max_participants - @event.bookings.count %>
+      <% if places_restantes > 0 %>
+        <div class="alert alert-success">
+          Il reste <%= places_restantes %> places disponibles
+        </div>
+      <% else %>
+        <div class="alert alert-danger">
+          Événement complet
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-4">
+      <% if @event.user == current_user %>
+        <p class="text-info">Vous êtes l'organisateur de cet événement</p>
+        <%= link_to "Supprimer l'événement", event_path(@event),
+            data: {
+              turbo_method: :delete,
+              turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet événement ?"
+            },
+            class: "btn btn-danger" %>
+
+      <% elsif @booking %>
+        <p class="text-success">✅ Vous êtes inscrit à cet événement</p>
+        <%= link_to "Annuler mon inscription", booking_path(@booking),
+            method: :delete,
+            data: { confirm: "Voulez-vous annuler ?" },
+            class: "btn btn-warning" %>
+
+      <% elsif places_restantes > 0 %>
+        <%= form_with url: event_bookings_path(@event), local: true do |f| %>
+          <%= f.submit "S'inscrire", class: "btn btn-primary" %>
+        <% end %>
+
+      <% else %>
+        <p class="text-muted">Vous ne pouvez pas vous inscrire (complet)</p>
+      <% end %>
+
+      <%= link_to "Retour", events_path, class: "btn btn-secondary mt-2" %>
+    </div>
+  </div>
+</div>
+
+<% if @event.user == current_user && @event.bookings.any? %>
+  <div class="card mt-4">
+    <div class="card-body">
+      <h3>Participants inscrits</h3>
+      <ul>
+        <% @event.bookings.each do |booking| %>
+          <li><%= booking.user.email %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>

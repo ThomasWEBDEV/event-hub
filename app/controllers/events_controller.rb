@@ -19,16 +19,20 @@ class EventsController < ApplicationController
     if @event.save
       redirect_to @event, notice: 'Événement créé!'
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: unprocessable_entity
     end
   end
 
   def destroy
-    @event = current_user.events.find(params[:id])
-    @event.destroy
-    redirect_to events_path, notice: 'Événement supprimé!'
-  end
+    @event = Event.find(params[:id])
 
+    if @event.user == current_user
+      @event.destroy
+      redirect_to events_path, notice: 'Événement supprimé avec succès!'
+    else
+      redirect_to events_path, alert: 'Vous ne pouvez pas supprimer cet événement.'
+    end
+  end
   private
 
   def event_params

@@ -1,2 +1,60 @@
-<h1>Events#index</h1>
-<p>Find me in app/views/events/index.html.erb</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Événements disponibles</h1>
+  <% if user_signed_in? %>
+    <%= link_to "Créer un événement", new_event_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+
+<% if @events.any? %>
+  <% @events.each do |event| %>
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h2><%= event.title %></h2>
+            <p class="mb-2"><%= truncate(event.description, length: 100) %></p>
+
+            <div class="mb-2">
+              <small class="text-muted">
+                <%= event.event_date.strftime("%d/%m/%Y à %H:%M") %><br>
+                <%= event.location %><br>
+                <%= event.user.email.split('@').first %>
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <% if event.available_spots > 0 %>
+                <span class="badge bg-success">
+                  <%= pluralize(event.available_spots, 'place restante') %> sur <%= event.max_participants %>
+                </span>
+              <% else %>
+                <span class="badge bg-danger">Complet</span>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="d-flex flex-column gap-2">
+            <%= link_to "Voir détails", event, class: "btn btn-outline-primary" %>
+            <% if event.user == current_user %>
+              <%= link_to "Supprimer", event, method: :delete,
+                  confirm: "Êtes-vous sûr ?",
+                  class: "btn btn-outline-danger btn-sm" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="text-center mt-5">
+    <div class="alert alert-info">
+      <h4>Aucun événement disponible</h4>
+      <p>Soyez le premier à créer un événement !</p>
+      <% if user_signed_in? %>
+        <%= link_to "Créer un événement", new_event_path, class: "btn btn-primary" %>
+      <% else %>
+        <%= link_to "Se connecter", new_user_session_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

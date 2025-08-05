@@ -1,2 +1,51 @@
-<h1>Bookings#index</h1>
-<p>Find me in app/views/bookings/index.html.erb</p>
+<h1>Mes inscriptions</h1>
+
+<% if @bookings.any? %>
+  <div class="row">
+    <% @bookings.each do |booking| %>
+      <div class="col-12 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title"><%= booking.event.title %></h5>
+
+            <p class="card-text">
+              <%= truncate(booking.event.description, length: 100) %>
+            </p>
+
+            <div class="text-muted mb-3">
+              <small>
+                📅 <%= booking.event.event_date.strftime("%d/%m/%Y à %H:%M") %><br>
+                📍 <%= booking.event.location %><br>
+                👤 Organisé par <%= booking.event.user.email %>
+              </small>
+            </div>
+
+            <p class="text-success">
+              ✅ Inscrit le <%= booking.created_at.strftime("%d/%m/%Y à %H:%M") %>
+            </p>
+
+            <div class="d-flex gap-2">
+              <%= link_to "Voir l'événement", event_path(booking.event),
+                  class: "btn btn-primary btn-sm" %>
+              <%= link_to "Annuler mon inscription", booking_path(booking),
+                  method: :delete,
+                  data: { confirm: "Êtes-vous sûr de vouloir annuler cette inscription ?" },
+                  class: "btn btn-danger btn-sm" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+<% else %>
+  <div class="alert alert-info mt-4">
+    <h4>Aucune inscription</h4>
+    <p>Vous n'êtes inscrit à aucun événement pour le moment.</p>
+    <%= link_to "Découvrir les événements", events_path, class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<div class="mt-4">
+  <%= link_to "← Retour aux événements", events_path, class: "btn btn-secondary" %>
+</div>

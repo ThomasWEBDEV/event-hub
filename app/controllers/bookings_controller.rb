@@ -1,4 +1,11 @@
 class BookingsController < ApplicationController
+  before_action :authenticate_user!
+
+  def new
+    @event = Event.find(params[:event_id])
+    @booking = current_user.bookings.new(event: @event)
+  end
+
   def index
     @bookings = current_user.bookings.includes(:event)
   end

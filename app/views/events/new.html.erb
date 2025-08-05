@@ -1,2 +1,57 @@
-<h1>Events#new</h1>
-<p>Find me in app/views/events/new.html.erb</p>
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h1>Créer un événement</h1>
+
+        <% if @event.errors.any? %>
+          <div class="alert alert-danger">
+            <h4><%= pluralize(@event.errors.count, "erreur") %> :</h4>
+            <ul>
+              <% @event.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with model: @event, local: true do |f| %>
+
+          <div class="mb-3">
+            <%= f.label :title, "Titre de l'événement", class: "form-label" %>
+            <%= f.text_field :title, class: "form-control", placeholder: "Ex: Soirée jeux de société" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :description, "Description", class: "form-label" %>
+            <%= f.text_area :description, class: "form-control", rows: 4,
+                placeholder: "Décrivez votre événement..." %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :event_date, "Date et heure", class: "form-label" %>
+            <%= f.datetime_local_field :event_date, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :location, "Lieu", class: "form-label" %>
+            <%= f.text_field :location, class: "form-control",
+                placeholder: "Ex: 10 rue de la Paix, Paris" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :max_participants, "Nombre maximum de participants", class: "form-label" %>
+            <%= f.number_field :max_participants, class: "form-control",
+                min: 1, placeholder: "Ex: 20" %>
+          </div>
+
+          <div class="d-flex gap-2">
+            <%= f.submit "Créer l'événement", class: "btn btn-primary" %>
+            <%= link_to "Annuler", events_path, class: "btn btn-secondary" %>
+          </div>
+
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
